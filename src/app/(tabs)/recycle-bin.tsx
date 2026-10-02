@@ -1,10 +1,13 @@
 import { Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const recyclebin = () => {
   return (
-    <View>
-      <Text>recyclebin</Text>
-    </View>
+    <SafeAreaView>
+      <View>
+        <Text>recyclebin</Text>
+      </View>
+    </SafeAreaView>
   );
 };
 
