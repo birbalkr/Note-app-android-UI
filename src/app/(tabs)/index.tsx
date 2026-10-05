@@ -1,6 +1,7 @@
 import { useResponsive } from "@/hooks/useResponsive";
 import Feather from '@expo/vector-icons/Feather';
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { router } from "expo-router";
 import { useState } from "react";
 import {
   FlatList,
@@ -8,9 +9,10 @@ import {
   TextInput,
   TouchableOpacity,
   useWindowDimensions,
-  View
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
 const noteColors = ["#FDE68A", "#BFDBFE", "#BBF7D0", "#FBCFE8", "#DDD6FE"];
 
 const data = [
@@ -21,81 +23,118 @@ const data = [
 ]
 export default function Index() {
   const { width } = useWindowDimensions();
-  const {font18, font5 } = useResponsive();
+  const { font18 } = useResponsive();
   const [searchQuery, setSearchQuery] = useState("");
-  const isMobile = width < 600;
-  const isTablet = width >= 600 && width < 1024;
-  const isDesktop = width >= 1024;
+  const filteredNotes = data.filter((item) =>
+    `${item.title} ${item.description}`.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <SafeAreaView>
-      <View style={{}}>
-        {isMobile && (
-          <View >
-            {/* Header  */}
-            <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
-              <MaterialCommunityIcons name="microsoft-onenote" size={45} color="black" />
-              <Text style={{ fontSize: 26, fontWeight: "bold", marginLeft: 10 }}>
-                NOTE APP
-              </Text>
-            </View>
-
-            {/* Search  */}
-            <View style={{ borderColor: "gray", borderWidth: 1, borderRadius: 15, paddingHorizontal: 10, flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 20, marginHorizontal: 20 }}>
-              <TextInput
-                placeholder="search......."
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-              />
-              <TouchableOpacity
-                onPress={() => {
-                  console.log("search:", searchQuery);
-
-                }}
-              >
-                <Feather name="search" size={24} color="black" />
-              </TouchableOpacity>
-            </View>
-
-            <FlatList
-              data={data}
-              numColumns={2}
-              contentContainerStyle={{ paddingHorizontal: 15, paddingBottom: 20 }}
-              renderItem={({ item }) => (
-                <View style={{ width: (width - 50) / 2, minHeight: 180, backgroundColor: item.backgroundColor, borderColor: "gray", borderWidth: 1, borderRadius: 15, paddingHorizontal: 10, justifyContent: "space-between", alignItems: "flex-start", marginTop: 20, marginHorizontal: 5, paddingVertical: 10 }}>
-                  <Text style={{ fontWeight: "bold", fontSize: font18 }}>
-                    {item.title}
-                  </Text>
-                  <Text style={{ fontSize: font18, marginTop: 5 }}>
-                    {item.description}
-                  </Text>
-                </View>
-              )}
-              keyExtractor={(item) => item.id.toString()}
-            />
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#FAFAFA" }}>
+      <View style={{ flex: 1, padding: 20 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 24 }}>
+          <View
+            style={{
+              width: 48,
+              height: 48,
+              borderRadius: 16,
+              backgroundColor: "#FDE68A",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <MaterialCommunityIcons name="notebook-outline" size={28} color="#713F12" />
           </View>
-        )}
+          <View style={{ marginLeft: 14 }}>
+            <Text style={{ fontSize: 28, fontWeight: "700", color: "#171717" }}>
+              My notes
+            </Text>
+            <Text style={{ color: "#737373", marginTop: 3 }}>
+              Keep your ideas in one place
+            </Text>
+          </View>
+        </View>
 
-        {
-          isTablet && (
-            <View  >
-              <Text  >
-                Tablet Layout
-              </Text>
-            </View>
-          )
-        }
+        <View
+          style={{
+            height: 54,
+            backgroundColor: "#FFFFFF",
+            borderColor: "#D4D4D4",
+            borderWidth: 1,
+            borderRadius: 14,
+            paddingHorizontal: 16,
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 4,
+          }}
+        >
+          <Feather name="search" size={21} color="#737373" />
+          <TextInput
+            placeholder="Search your notes"
+            placeholderTextColor="#A3A3A3"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            style={{ flex: 1, marginLeft: 10, fontSize: 16, color: "#171717" }}
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchQuery("")} accessibilityLabel="Clear search">
+              <Feather name="x-circle" size={20} color="#737373" />
+            </TouchableOpacity>
+          )}
+        </View>
 
-        {
-          isDesktop && (
-            <View  >
-              <Text>
-                Desktop Layout
+        <FlatList
+          data={filteredNotes}
+          numColumns={2}
+          contentContainerStyle={{ paddingBottom: 20 }}
+          columnWrapperStyle={{ justifyContent: "space-between" }}
+          ListHeaderComponent={
+            <Text style={{ fontSize: 18, fontWeight: "700", color: "#404040", marginTop: 24, marginBottom: 2 }}>
+              Recent notes
+            </Text>
+          }
+          ListEmptyComponent={
+            <Text style={{ color: "#737373", textAlign: "center", marginTop: 40 }}>
+              No notes found
+            </Text>
+          }
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() =>
+                router.push({
+                  pathname: "/(tabs)/addNotes",
+                  params: {
+                    noteId: item.id.toString(),
+                    noteTitle: item.title,
+                    noteDescription: item.description,
+                    noteColor: item.backgroundColor,
+                  },
+                })
+              }
+              style={{
+                width: (width - 50) / 2,
+                minHeight: 180,
+                backgroundColor: item.backgroundColor,
+                borderColor: "#D4D4D4",
+                borderWidth: 1,
+                borderRadius: 16,
+                padding: 14,
+                justifyContent: "space-between",
+                marginTop: 16,
+              }}
+            >
+              <Text style={{ fontWeight: "700", fontSize: font18, color: "#171717" }}>
+                {item.title}
               </Text>
-            </View>
-          )
-        }
-      </View >
+              <Text style={{ fontSize: 14, lineHeight: 21, marginTop: 8, color: "#404040" }}>
+                {item.description}
+              </Text>
+            </TouchableOpacity>
+          )}
+          keyExtractor={(item) => item.id.toString()}
+        />
+      </View>
     </SafeAreaView>
   );
 }

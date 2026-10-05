@@ -1,4 +1,5 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
     KeyboardAvoidingView,
@@ -14,11 +15,21 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const noteColors = ["#FDE68A", "#BFDBFE", "#BBF7D0", "#FBCFE8", "#DDD6FE"];
 
 export default function AddNotes() {
-    const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
-    const [selectedColor, setSelectedColor] = useState(noteColors[0]);
-    const [saved, setSaved] = useState(false);
-    const canSave = title.trim().length > 0 && content.trim().length > 0;
+    const { noteId, noteTitle, noteDescription, noteColor } =
+        useLocalSearchParams<{
+            noteId?: string;
+            noteTitle?: string;
+            noteDescription?: string;
+            noteColor?: string;
+        }>();
+        const isEditing = Boolean(noteId);
+        const [title, setTitle] = useState(isEditing ? noteTitle ?? "" : "");
+        const [content, setContent] = useState(isEditing ? noteDescription ?? "" : "");
+        const [selectedColor, setSelectedColor] = useState(
+            isEditing && noteColor && noteColors.includes(noteColor) ? noteColor : noteColors[0]
+        );
+        const [saved, setSaved] = useState(false);
+        const canSave = title.trim().length > 0 && content.trim().length > 0;
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "#FAFAFA" }}>
@@ -41,14 +52,18 @@ export default function AddNotes() {
                                 alignItems: "center",
                             }}
                         >
-                            <MaterialCommunityIcons name="note-plus-outline" size={28} color="#713F12" />
+                            <MaterialCommunityIcons
+                                name={isEditing ? "note-edit-outline" : "note-plus-outline"}
+                                size={28}
+                                color="#713F12"
+                            />
                         </View>
                         <View style={{ marginLeft: 14 }}>
                             <Text style={{ fontSize: 28, fontWeight: "700", color: "#171717" }}>
-                                Add note
+                                {isEditing ? "Edit note" : "Add note"}
                             </Text>
                             <Text style={{ color: "#737373", marginTop: 3 }}>
-                                Capture an idea before it slips away
+                                {isEditing ? "Update your note" : "Capture an idea before it slips away"}
                             </Text>
                         </View>
                     </View>
@@ -128,7 +143,12 @@ export default function AddNotes() {
 
                     <TouchableOpacity
                         disabled={!canSave || saved}
-                        onPress={() => setSaved(true)}
+                        onPress={() => {
+                            setSaved(true);
+                            if (isEditing) {
+                                router.back();
+                            }
+                        }}
                         style={{
                             height: 54,
                             borderRadius: 14,
@@ -139,7 +159,7 @@ export default function AddNotes() {
                         }}
                     >
                         <Text style={{ color: canSave && !saved ? "#FFFFFF" : "#737373", fontSize: 16, fontWeight: "700" }}>
-                            {saved ? "Note saved" : "Save note"}
+                            {saved ? (isEditing ? "Note updated" : "Note saved") : isEditing ? "Update note" : "Save note"}
                         </Text>
                     </TouchableOpacity>
                 </ScrollView>
