@@ -25,6 +25,7 @@ export function useResponsive() {
     const font3 = screenHeight / 281.7767;
     const font4 = screenHeight / 211.3325;
     const font5 = screenHeight / 169.066;
+    const font18 = screenHeight / 47.018;
 
     // ─────────────────────────────────────
     // Padding
@@ -91,6 +92,7 @@ export function useResponsive() {
         font3,
         font4,
         font5,
+        font18,
 
         padding1,
         padding2,
