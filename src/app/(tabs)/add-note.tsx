@@ -1,11 +1,11 @@
 import { Text, View } from 'react-native'
 
-const recycleBin = () => {
+const AddNote = () => {
     return (
         <View>
-            <Text>recycleBin</Text>
+            <Text>AddNote</Text>
         </View>
     )
 }
 
-export default recycleBin
+export default AddNote
