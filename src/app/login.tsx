@@ -1,5 +1,7 @@
+import { login } from "@/api/auth.api";
+import { Authcontext } from "@/utils/authContext";
 import { Link } from "expo-router";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
     KeyboardAvoidingView,
     Platform,
@@ -8,7 +10,7 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    View,
+    View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -16,7 +18,7 @@ export default function LoginScreen() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    
+    const authlogin = useContext(Authcontext)
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -50,7 +52,7 @@ export default function LoginScreen() {
                         style={styles.input}
                     />
 
-                    <TouchableOpacity style={styles.button} activeOpacity={0.8} onPress={() => { }}>
+                    <TouchableOpacity style={styles.button} activeOpacity={0.8} onPress={() => login(email, password)}>
                         <Text style={styles.buttonText}>Log in</Text>
                     </TouchableOpacity>
 

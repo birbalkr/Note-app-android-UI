@@ -7,11 +7,13 @@
     "icon": "./assets/images/icon.png",
     "scheme": "noteappandroidui",
     "userInterfaceStyle": "automatic",
-    
     "ios": {
       "icon": "./assets/expo.icon"
     },
     "android": {
+      "permissions": [
+        "INTERNET"
+      ],
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -37,7 +39,8 @@
           },
           "imageWidth": 100
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,
