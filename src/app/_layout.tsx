@@ -1,27 +1,17 @@
-import { Authcontext, AuthProvider } from "@/utils/authContext";
 import { Stack } from "expo-router";
-import { useContext } from "react";
+import { StatusBar } from "expo-status-bar";
+import React from "react";
+import { AuthProvider } from "@/store/AuthProvider";
 
 export default function RootLayout() {
     return (
         <AuthProvider>
-            <RootNavigator />
+            <React.Fragment>
+                <StatusBar style="auto" />
+                <Stack screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="(protected)" options={{ headerShown: false }} />
+                </Stack>
+            </React.Fragment>
         </AuthProvider>
-    )
-}
-
-function RootNavigator() {
-    const { isLoging } = useContext(Authcontext)
-
-    return (
-        <Stack>
-            <Stack.Protected guard={isLoging}>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            </Stack.Protected>
-            <Stack.Protected guard={!isLoging}>
-                <Stack.Screen name="login" options={{ headerShown: false }} />
-                <Stack.Screen name="register" options={{ headerShown: false }} />
-            </Stack.Protected>
-        </Stack>
-    )
+    );
 }

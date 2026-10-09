@@ -1,11 +1,11 @@
 import { Text, View } from 'react-native'
 
-const AddNote = () => {
+const index = () => {
     return (
         <View>
-            <Text>AddNote</Text>
+            <Text>index</Text>
         </View>
     )
 }
 
-export default AddNote
+export default index
